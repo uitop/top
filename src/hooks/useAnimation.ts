@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const useAnimation = (condition) => {
+const useAnimation = (condition:boolean):[boolean,() => void,boolean] => {
   const [isComplete, setComplete] = useState(false);
 
   useEffect(() => {
@@ -11,7 +11,7 @@ const useAnimation = (condition) => {
   const shouldRender = condition || isComplete;
   const animationTrigger = condition && isComplete;
 
-  const handleTransitionEnd = () => {
+  const handleTransitionEnd = ():void => {
     if (!condition) setComplete(false);
   };
 

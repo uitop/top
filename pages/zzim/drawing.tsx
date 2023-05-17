@@ -2,10 +2,10 @@ import styled from '@emotion/styled'
 import DownRound from '@/icons/DownRound'
 import RollSlick from '@/components/Rolling';
 const RollWrap =styled.section`
-  background-color: #FFDB00;
-  height: calc(100vh - 44px);
+  background-color: #00ec4f;
+  height: 100vh;
   @supports (-webkit-touch-callout: none) { 
-    height: calc(-webkit-fill-available - 44px);
+    height: -webkit-fill-available;
   }
   .text_sec{
     position: relative;

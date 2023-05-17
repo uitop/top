@@ -1,11 +1,11 @@
 
 import CN from 'classnames';
 import { useRecoilValue } from 'recoil';
-import { markedList } from '../store/store';
-import BaseIcon from '@/icons/BaseIcon';
-import Link from 'next/link';
+import { markedList,Tdata } from '@/store/zzimStore';
+import { useRouter } from 'next/router';
 const SelectedBtn = () => {
   const itemList = useRecoilValue(markedList);
+  const router = useRouter()
   const length = itemList.length;
   const max = 3;
   const markedIcons = () => {
@@ -13,12 +13,11 @@ const SelectedBtn = () => {
       const many = length > 3 ? `+ ${length -3}`:'';
       const arrHtml = []
       for(let i=0; i < max ; i++){
-        const logo = itemList[i] ? itemList[i].logo:'';
+        const {path} = itemList[i] ? itemList[i] as Tdata :{path:''}
         arrHtml.push(
           <span className={CN({'dim':i===0 && many})} key={'marked'+i}>
-            {logo && <span style={{backgroundImage:`url(/images/${logo})`}}>
-              {i===0 && many &&<><i>{many}</i><BaseIcon/></>}
-            </span>}
+            {path && <img src={`/images/${path}`}/>}
+            {i===0 && many &&<i>{many}</i>}
           </span>
         )
       }
@@ -26,11 +25,9 @@ const SelectedBtn = () => {
     } else return<><span/><span/><span/></>
   }
   return (
-    <Link href="/zzim/drawing">
-      <button disabled={itemList.length < max}>
-        <p>{markedIcons()}</p>
-      </button>
-    </Link>
+    <button disabled={itemList.length < max} onClick={()=>router.push("/zzim/drawing")}>
+      <p>{markedIcons()}</p>
+    </button>
   )
 }
 

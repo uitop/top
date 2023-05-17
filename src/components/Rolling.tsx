@@ -1,29 +1,34 @@
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useReward } from 'react-rewards';
-import { useRecoilValue } from 'recoil';
-import CN from 'classnames';
-import styled from '@emotion/styled'
-import { markedList } from '@/store/store';
 import useAnimation from '@/hooks/useAnimation';
 import useRollNumbers from '@/hooks/useRollNumbers';
+import { markedList,Tdata } from '@/store/zzimStore';
 import Debounce from '@/utils/Debounce';
+import styled from '@emotion/styled';
+import CN from 'classnames';
 import Link from 'next/link';
+import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
+import { useReward } from 'react-rewards';
+import { useRecoilValue } from 'recoil';
 const RollWrap = styled.div`
-  margin-top:83px;
+  margin:83px auto 0;
   overflow: hidden;
   position: relative;
+  max-width: 1000px;
   .forYou{
     opacity: 0;
     position: absolute;
     left:0;
-    top:-15px;
+    top:0;
     width:100%;
-    height:calc(100% + 30px);
+    height:100%;
     background: no-repeat 50%;
     z-index: 3;
-    animation: fadeIn 1s ease .2s forwards;
     text-align: center;
+    animation: fadeIn 1s ease .2s forwards;
+    img{
+      border-radius: 20% 0;
+      animation: radiusRoll 3s ease 1.2s infinite,zoomIn 1s ease forwards;
+    }
   }
   .whiteBg{
     opacity: 0;
@@ -33,52 +38,75 @@ const RollWrap = styled.div`
     left:0;
     width:100%;
     height: 100vh;
+    padding-top: 80vh;
     background-color:#fff;
     z-index: 2;
-    animation: fadeIn 1s ease .7s forwards;
-    a{
-      opacity: 0;
-      position: absolute;
-      bottom:10px;
-      left:0;
-      width:100%;
-      animation: fadeIn 1s ease 3s forwards;
-    }
+    box-sizing: border-box;
+    animation: fadeIn 1s ease .9s forwards;
     @supports (-webkit-touch-callout: none) { 
       height:-webkit-fill-available;
+    }
+    a{
+      display:inline-block;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: inset 0 0 8px 1px #cecdcd;
+      opacity: 0;
+      animation: fadeIn 1s ease 3s forwards;
+      text-decoration: none;
+      position: relative;
+      z-index: 5;
+    }
+  }
+  @keyframes radiusRoll {
+    0%{
+      border-radius: 20% 0;
+    }
+    50%{
+      border-radius: 0 20%;
+    }
+    100%{
+      border-radius: 20% 0;
+    }
+  }
+  @keyframes zoomIn {
+    0%{
+      padding: 5%;
+      height:90%;
+    }
+    100%{
+      padding: 0;
+      height: 100%;
     }
   }
   @keyframes fadeIn {
     from{
       opacity: 0;
-      background-size: auto calc(100% - 70px);
     }
     to{
       opacity: 1;
-      background-size: auto calc(100% - 50px);
     }
   }
 `
-const RollList = styled.ul`
+const RollList = styled.ul<{rollEnd:boolean,rollWidth:string}>`
   margin:20px 0;
   white-space: nowrap;
   margin-left:-8%;
   font-size: 0;
-  transition: ${prop=>prop.rollEnd ?`3s`:`.1s`};
+  transition: ${({rollEnd})=>rollEnd ?`4s`:`.1s`};
   transition-timing-function: cubic-bezier(1.000, 0.080, 0.550, 1.215);
   position: relative;
   &.rolling{
-    transform: ${prop=>prop.rollWidth};
+    transform: ${({rollWidth})=>rollWidth};
   }
   li{
     display: inline-block;
     width:36%;
     padding:3px 0;
-    p{
-      width:100%;
-      padding-top:75%;
-      background: no-repeat 50%;
-      background-size: auto 100%;
+    text-align:center;
+    img{
+      width:90%;
+      border-radius: 20%;
       ${prop=>!prop.rollEnd &&`filter: blur(2px);`}
       transition: .5s;
     }
@@ -90,19 +118,23 @@ const RollList = styled.ul`
   }
 `
 const RollSlick = () => {
-  const rollWrap = useRef(null)
+  const rollWrap = useRef<HTMLUListElement>(null)
   const [isRoll,setRoll] = useState(true)
   const [isItemWidth,setItemWidth] = useState(0)
   const list = useRecoilValue(markedList)
   const [length,multi,giftNum,maxCount] = useRollNumbers(list);
   const [shouldRender, handleTransitionEnd] = useAnimation(isRoll);
   const { reward } = useReward('rewardSpan', 'confetti');
+  const getItem = (idx:number):Tdata =>{
+    return list[idx] as Tdata
+  }
   const getItemWidth = Debounce(()=>{
-    setItemWidth(rollWrap.current.children[0].offsetWidth*maxCount)
-  },800)
+    const item = rollWrap.current?.firstChild as HTMLElement
+    rollWrap.current && setItemWidth(item.offsetWidth*maxCount)
+  },600)
   useEffect(()=>{
     setRoll(false)
-    length && setItemWidth(rollWrap.current.children[0].offsetWidth*maxCount)
+    getItemWidth()
   },[maxCount,length])
   useEffect(()=>{
     window.addEventListener('resize',getItemWidth);
@@ -112,8 +144,10 @@ const RollSlick = () => {
     length && !shouldRender&&reward()
   },[shouldRender,reward,length])
   const setLoopList = useCallback(() => {
-    const arrHtml = []
-    const arrPush = (num,key) => arrHtml.push(<li key={list[num].id+String(key)}><p style={{backgroundImage:`url(/images/${list[num].logo})`}} ></p></li>)
+    const arrHtml = [] as ReactElement[]
+    const arrPush = (num:number,key:number) => {
+      const {id,path} = getItem(num)
+      arrHtml.push(<li key={id+String(key)}><img src={`/images/${path}`}  alt="추천후보"/></li>)}
     let step = 0,loop = 1, stop = true;
     while (stop) {
       if(step === length){
@@ -147,7 +181,8 @@ const RollSlick = () => {
       { length ? setLoopList():<li className="empty"><Link href="/zzim">찜먼저 하기</Link></li>}
     </RollList>
     {!!length && !shouldRender && <>
-      <div className="forYou" style={{backgroundImage:`url(/images/${list[giftNum].logo})`}} >
+      <div className="forYou">
+        <img src={`/images/${getItem(giftNum).path}`} alt={getItem(giftNum).name} />
         <span id="rewardSpan" />
       </div>
       <div className="whiteBg">

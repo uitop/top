@@ -1,12 +1,11 @@
-body,p,ul,li,h1,h3,div,section,button{
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+body,p,ul,li,h1,h3,h4,h5,main,div,section,button{
   margin:0;
   padding:0;
 }
 body{
-  max-width:640px;
-  margin:0 auto;
-  font-family: 'Apple SD Gothic Neo';
-  color:#060B11;
+  font-family: 'Gowun Dodum','Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  color:#0f0f0f;
 }
 button{
   cursor: pointer;
