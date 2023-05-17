@@ -122,7 +122,7 @@ const RollSlick = () => {
   const [isRoll,setRoll] = useState(true)
   const [isItemWidth,setItemWidth] = useState(0)
   const list = useRecoilValue(markedList)
-  const [length,multi,giftNum,maxCount] = useRollNumbers(list);
+  const [length,multi,giftNum,maxCount] = useRollNumbers(list as Tdata[]);
   const [shouldRender, handleTransitionEnd] = useAnimation(isRoll);
   const { reward } = useReward('rewardSpan', 'confetti');
   const getItem = (idx:number):Tdata =>{
@@ -171,7 +171,7 @@ const RollSlick = () => {
       step++
     }
     return arrHtml
-  },[giftNum, length, list, multi])
+  },[giftNum, length, list, multi,getItem])
   return <RollWrap className='rollIcon_sec'>
     <RollList ref={rollWrap}
     onTransitionEnd={handleTransitionEnd}

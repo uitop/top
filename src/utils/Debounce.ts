@@ -1,12 +1,12 @@
-const Debounce = (fn, time) => {
-  let timeoutId
-  const wrapper =  (...args) => {
+const Debounce = (fn:() => void, time:number) => {
+  let timeoutId:NodeJS.Timeout | null
+  const wrapper =  () => {
     if (timeoutId) {
       clearTimeout(timeoutId)
     }
     timeoutId = setTimeout(() => {
       timeoutId = null
-      fn(...args)
+      fn()
     }, time)
   }
   return wrapper
