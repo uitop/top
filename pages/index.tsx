@@ -3,6 +3,7 @@ import React, { UIEvent, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { mainList, Tmain } from '@/store/homeStore';
 import { useRouter } from 'next/router';
+import apiWeather from '@/api/weather';
 const Main = styled.div<{bgNum:number}>`
   background-image: url('/images/mainbg.jpg');
   background-position: ${({bgNum})=>`${100 - bgNum}% top;`};
@@ -144,6 +145,8 @@ const Home = () => {
       }
     }
   }
+  
+
   return (
     <Main bgNum={isBg}>
       <main onScroll={handleScroll}>
@@ -162,7 +165,7 @@ const Home = () => {
             </div>)
           })}
         </section>
-        <section className='heightSec'></section>
+        <section className='heightSec'>{apiWeather()}</section>
       </main>
     </Main>
   )

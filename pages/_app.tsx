@@ -1,7 +1,8 @@
 import { AppProps } from "next/app";
 import React,{FC} from "react";
 import Head from 'next/head'
-import { RecoilRoot,RecoilEnv } from "recoil";
+import { RecoilRoot,RecoilEnv } from "recoil"
+import { Analytics } from '@vercel/analytics/react';;
 import RootLayout from "@/components/layout";
 import '@/styles/reset.css'
 import '@/styles/common.css'
@@ -15,6 +16,7 @@ const MyApp:FC<AppProps> = ({ Component, pageProps }) => {
       </Head>
       <RootLayout>
         <Component {...pageProps} />
+        <Analytics />
       </RootLayout>
     </RecoilRoot>
   )
