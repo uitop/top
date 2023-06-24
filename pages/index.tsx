@@ -1,9 +1,8 @@
 import styled from '@emotion/styled'
-import React, { UIEvent, useState } from 'react';
+import React, { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { mainList, Tmain } from '@/store/homeStore';
+import { mainList, Tmain ,weatherInfo} from '@/store/homeStore';
 import { useRouter } from 'next/router';
-import apiWeather from '@/api/weather';
 const Main = styled.div<{bgNum:number}>`
   background-image: url('/images/mainbg.jpg');
   background-position: ${({bgNum})=>`${100 - bgNum}% top;`};
@@ -78,10 +77,35 @@ const Main = styled.div<{bgNum:number}>`
     padding:1em;
     position: relative;
     &.box5{
-      cursor: default;
+      .contents{
+        cursor: default;
+      }
       .text{
         background: none;
         transform: rotateY(0deg);
+        padding-top:.5rem;
+      }
+      dl{
+        display:flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin:0;
+        dt{
+          width:50px;
+        }
+        dd{
+          width:calc(100% - 50px);
+          margin:0;
+          img {
+            width:35px;
+            vertical-align:middle;
+          }
+          span{
+            vertical-align:middle;
+
+          }
+        }
       }
     }
   }
@@ -127,7 +151,20 @@ const Main = styled.div<{bgNum:number}>`
 const Home = () => {
   const [isBg,setBg] = useState(0)
   const list = useRecoilValue(mainList)
+  const getWeather = useRecoilValue(weatherInfo)
   const router = useRouter()
+  const setText = (text?:string) =>{
+    if(text){
+      return text
+    } else {
+      const {main,weather} = getWeather;
+      return <dl>
+        <dt>하늘 :</dt><dd><span>{weather[0].description}</span><img src={`https://openweathermap.org/img/wn/${weather[0].icon}.png`} alt={weather[0].main} /></dd>
+        <dt>온도 :</dt><dd>{main.temp}&#8451;</dd>
+        <dt>습도 :</dt><dd>{main.humidity}%</dd>
+      </dl>
+    }
+  }
   const handleScroll = (e:React.UIEvent<HTMLElement>) =>{
     const scroll = Math.floor(e.currentTarget.scrollTop /  window.innerHeight * 10)*10;
     setBg(scroll)
@@ -145,8 +182,6 @@ const Home = () => {
       }
     }
   }
-  
-
   return (
     <Main bgNum={isBg}>
       <main onScroll={handleScroll}>
@@ -159,13 +194,13 @@ const Home = () => {
               <div className="contents" style={path ? {backgroundImage:`url(/images/${path})`}:{}} onClick={()=>handleClick(item)}>
                 <div className="text">
                   <h4>{name}</h4>
-                  <h5>{text}</h5>
+                  <h5>{setText(text)}</h5>
                 </div>
               </div>
             </div>)
           })}
         </section>
-        <section className='heightSec'>{apiWeather()}</section>
+        <section className='heightSec'></section>
       </main>
     </Main>
   )

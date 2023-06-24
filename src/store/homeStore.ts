@@ -1,12 +1,30 @@
-import { atom} from "recoil"
+import { atom,selector} from "recoil"
+import apiWeather from "@/api/weather"
 export type Tmain= {
   id: number,
-  type: 'ShowCase'|'About'|'RecentWork',
+  type: 'ShowCase'|'내꿈은 Only1'|'RecentWork',
   path?: string,
   name: string,
-  text: string,
+  text?: string,
   link?: string,
 }
+export const updateWeather = atom<string>({
+  key:'updateWeather',
+  default:''
+})
+export const weatherInfo = selector({
+  key:'weatherInfo',
+  get:async ({get}) => {
+    get(updateWeather)
+    try{
+      const response = await apiWeather()
+      return response || [2]
+    } catch(error){
+      console.error(error)
+      return []
+    }
+  }
+})
 
 export const mainList = atom<Tmain[]>({
   key:'mainList',
@@ -29,7 +47,7 @@ export const mainList = atom<Tmain[]>({
     type:'ShowCase',
     path:'main03.jpg',
     name:'웹메모장',
-    text:'스티커메모장 입니다.\n로컬스토리지에 저장합니다. UI\njQuery',
+    text:'스티커메모장 입니다.\n로컬스토리지에 저장합니다.\njQuery',
     link:'https://uitop.github.io/ui/jstk'
   },{
     id:4,
@@ -40,9 +58,8 @@ export const mainList = atom<Tmain[]>({
     link:'https://github.com/uitop/practice_ts'
   },{
     id:5,
-    type:'About',
-    name:'내꿈은 Only1',
-    text:'그리고 기차타고 유럽가기\n스크롤 해보세요\n잘 부탁드립니다.',
+    type:'내꿈은 Only1',
+    name:'지금 강남역날씨'
   },{
     id:6,
     type:'RecentWork',

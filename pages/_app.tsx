@@ -10,6 +10,7 @@ RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false
 const MyApp:FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <RecoilRoot>
+      <React.Suspense fallback={<div>Loading...</div>}>
       <Head>
         <title>포트폴리오</title>
         <link rel="shortcut icon" href="/favicon.ico" />
@@ -18,6 +19,7 @@ const MyApp:FC<AppProps> = ({ Component, pageProps }) => {
         <Component {...pageProps} />
         <Analytics />
       </RootLayout>
+      </React.Suspense>
     </RecoilRoot>
   )
 }
