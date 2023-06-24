@@ -135,7 +135,7 @@ const RollSlick = () => {
   useEffect(()=>{
     setRoll(false)
     getItemWidth()
-  },[maxCount,length])
+  },[maxCount,length,getItemWidth])
   useEffect(()=>{
     window.addEventListener('resize',getItemWidth);
     return ()=> window.addEventListener('resize',getItemWidth);

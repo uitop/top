@@ -1,7 +1,9 @@
 import styled from '@emotion/styled'
-import React, { useState } from 'react';
+import axios from 'axios';
+import Image from 'next/image';
+import React, { useState,useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
-import { mainList, Tmain ,weatherInfo} from '@/store/homeStore';
+import { mainList, Tmain} from '@/store/homeStore';
 import { useRouter } from 'next/router';
 const Main = styled.div<{bgNum:number}>`
   background-image: url('/images/mainbg.jpg');
@@ -148,21 +150,39 @@ const Main = styled.div<{bgNum:number}>`
   height:100vh;
 }
 `
+type WeatherType = {
+  weather:[{[key:string]:string}],
+  main:{[key:string]:number}
+} | undefined
 const Home = () => {
   const [isBg,setBg] = useState(0)
+  const [isWeather,setWeather] = useState<WeatherType> (undefined)
   const list = useRecoilValue(mainList)
-  const getWeather = useRecoilValue(weatherInfo)
   const router = useRouter()
+  useEffect(()=>{
+    axios.get('/api/weather').then(
+      (res)=>{
+        setWeather(res.data)
+      }
+    )
+  },[])
   const setText = (text?:string) =>{
     if(text){
       return text
     } else {
-      const {main,weather} = getWeather;
+      if(isWeather) {
+      const {main,weather} = isWeather
+      const sky = weather[0]
       return <dl>
-        <dt>하늘 :</dt><dd><span>{weather[0].description}</span><img src={`https://openweathermap.org/img/wn/${weather[0].icon}.png`} alt={weather[0].main} /></dd>
+        <dt>하늘 :</dt>
+        <dd>
+          <span>{sky.description}</span>
+          <Image src={`https://openweathermap.org/img/wn/${sky.icon}.png`} alt={sky.main} width="35" height="35"/>
+        </dd>
         <dt>온도 :</dt><dd>{main.temp}&#8451;</dd>
         <dt>습도 :</dt><dd>{main.humidity}%</dd>
       </dl>
+      } else return '날씨 가져오는중...'
     }
   }
   const handleScroll = (e:React.UIEvent<HTMLElement>) =>{

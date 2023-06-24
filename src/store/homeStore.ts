@@ -1,5 +1,4 @@
 import { atom,selector} from "recoil"
-import apiWeather from "@/api/weather"
 export type Tmain= {
   id: number,
   type: 'ShowCase'|'내꿈은 Only1'|'RecentWork',
@@ -8,23 +7,7 @@ export type Tmain= {
   text?: string,
   link?: string,
 }
-export const updateWeather = atom<string>({
-  key:'updateWeather',
-  default:''
-})
-export const weatherInfo = selector({
-  key:'weatherInfo',
-  get:async ({get}) => {
-    get(updateWeather)
-    try{
-      const response = await apiWeather()
-      return response || [2]
-    } catch(error){
-      console.error(error)
-      return []
-    }
-  }
-})
+
 
 export const mainList = atom<Tmain[]>({
   key:'mainList',
