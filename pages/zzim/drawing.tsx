@@ -1,3 +1,5 @@
+import React from 'react';
+import Head from 'next/head'
 import styled from '@emotion/styled'
 import DownRound from '@/icons/DownRound'
 import RollSlick from '@/components/Rolling';
@@ -27,7 +29,16 @@ const RollWrap =styled.section`
 `
 const Roll = () => {
   return (
-    <>
+    <React.Fragment>
+      <Head>
+        <title>동물주식</title>
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <meta property="description" content="돌려돌려 동물주식" />
+        <meta property="og:image" content="/images/ogImage.jpg"/>
+        <meta property="og:title" content="TOP 포트폴리오"/>
+        <meta property="og:description" content="돌려돌려 동물주식" />
+        <meta property="og:url" content="https://top-kappa.vercel.app/"/>
+      </Head>
       <RollWrap>
         <div className="text_sec">
           <h3>
@@ -38,7 +49,7 @@ const Roll = () => {
         </div>
         <RollSlick/>
       </RollWrap>
-    </>
+    </React.Fragment>
   );
 }
 

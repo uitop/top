@@ -1,10 +1,12 @@
-
+import React from 'react';
+import Head from 'next/head'
 import styled from '@emotion/styled'
 import { useRecoilValue } from 'recoil';
 import { itemList } from '@/store/zzimStore';
 import SelectItem from '@/components/SelectItem';
 import BookmarkIcon from '@/icons/BookmarkIcon';
 import SelectedBtn from '@/components/SelectedBtn';
+
 const SelectWrap = styled.section`
   .text_sec{
     text-align: center;
@@ -131,6 +133,16 @@ const SelectWrap = styled.section`
 const Select = () => {
   const list = useRecoilValue(itemList)
   return (
+  <React.Fragment>
+    <Head>
+      <title>동물주식</title>
+      <link rel="shortcut icon" href="/favicon.ico" />
+      <meta property="description" content="돌려돌려 동물주식" />
+      <meta property="og:image" content="/images/ogImage.jpg"/>
+      <meta property="og:title" content="TOP 포트폴리오"/>
+      <meta property="og:description" content="돌려돌려 동물주식" />
+      <meta property="og:url" content="https://top-kappa.vercel.app/"/>
+    </Head>
     <SelectWrap>
       <div className="text_sec">
         <h1>좋아하는 동물주식을<br/>찜하세요!</h1>
@@ -154,6 +166,7 @@ const Select = () => {
         <SelectedBtn/>
       </div>
     </SelectWrap>
+  </React.Fragment>
   );
 }
 
